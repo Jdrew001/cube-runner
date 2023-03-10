@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import MainScene from './Main.scene';
+import MainScene from './scenes/main.scene';
 
 const width = window.innerWidth
 const height = window.innerHeight
