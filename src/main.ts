@@ -4,19 +4,18 @@ import MainScene from './scenes/main.scene';
 const width = window.innerWidth
 const height = window.innerHeight
 
-const renderer = new THREE.WebGLRenderer({
-	canvas: document.getElementById('app') as HTMLCanvasElement
-})
+const renderer = new THREE.WebGLRenderer();
 renderer.setSize(width, height)
+document.body.appendChild( renderer.domElement )
 
 const mainCamera = new THREE.PerspectiveCamera(60, width / height, 0.1, 100)
-const scene = new MainScene(mainCamera)
-scene.initialize()
+const mainScene = new MainScene(mainCamera);
+mainScene.initialize()
 
 function tick()
 {
-	scene.update()
-	renderer.render(scene, mainCamera)
+	mainScene.update()
+	renderer.render(mainScene, mainCamera)
 	requestAnimationFrame(tick)
 }
 
