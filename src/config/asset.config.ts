@@ -3,4 +3,9 @@ export default class AssetConfig {
         MTL: 'assets/mainPlayer/mainPlayer.mtl',
         OBJ: 'assets/mainPlayer/mainPlayer.obj'
     }
+
+    public static SQUARE_ENTITY_PATHS = {
+        MTL: 'assets/obstacle/neonSquare.mtl',
+        OBJ: 'assets/obstacle/neonSquare.obj'
+    }
 }

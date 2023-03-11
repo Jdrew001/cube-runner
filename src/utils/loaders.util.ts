@@ -1,3 +1,4 @@
+import { Color, MeshPhongMaterial } from "three";
 import { MTLLoader } from "three/examples/jsm/loaders/MTLLoader";
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader";
 import { Service } from "typedi";
@@ -27,6 +28,11 @@ export class MtlObjLoadersService {
     }
 
     private setMaterialsToMTL(entityMTL: MTLLoader.MaterialCreator) {
-        this.objLoader.setMaterials(entityMTL);
+        let mtl = this.objLoader.setMaterials(entityMTL);
+        let neon = mtl.materials?.materials['Neon'] as MeshPhongMaterial;
+
+        if (neon) {
+            neon.color = new Color(0x33FF2C)
+        }
     }
 }

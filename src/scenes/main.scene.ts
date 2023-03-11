@@ -5,6 +5,7 @@ import GUI from "lil-gui";
 import GameOptions from "../config/options.config";
 import PlayerEntity from "../entities/player.entity";
 import AmbientLightEntity from "../entities/ambient-light.entity";
+import CubeEntity from "../entities/cube.entity";
 
 
 export default class MainScene extends THREE.Scene {
@@ -27,6 +28,10 @@ export default class MainScene extends THREE.Scene {
     get player() { return this._player;}
     set player(player: PlayerEntity) { this._player = player; }
 
+    private _cubes: Array<CubeEntity> = new Array<CubeEntity>();
+    get cubes() { return this._cubes; }
+    set cubes(value) { this._cubes = value; }
+
     CAM_CONFIG = GameOptions.GameCameraConfig;
 
     //private scale = new THREE.Vector3(1,1,1);
@@ -43,10 +48,12 @@ export default class MainScene extends THREE.Scene {
         this.initGui();
         await this.player.initialize();
         this.add(this.player.group);
-
         this.camera.position.set(this.CAM_CONFIG.position.x, this.CAM_CONFIG.position.y, this.CAM_CONFIG.position.z)
+        this.camera.rotation.set(this.CAM_CONFIG.rotation.x, this.CAM_CONFIG.rotation.y, this.CAM_CONFIG.rotation.z)
         //this.player.group.add(this.camera);
-        this.player.group.add(new AmbientLightEntity())
+        this.add(new AmbientLightEntity());
+
+        await this.initCube();
 
         document.addEventListener('keydown', this.handleKeyDown)
 		document.addEventListener('keyup', this.handleKeyUp)
@@ -56,9 +63,34 @@ export default class MainScene extends THREE.Scene {
         this.handleInput();
     }
 
+    async initCube() {
+        for (let i = 0; i < 1; i++) {
+            const cube = new CubeEntity();
+            await cube.initialize();
+            this.add(cube.group);
+            this.cubes.push(cube);
+        }
+    }
+
     private initGui() {
         this.gui.add(GameOptions.PlayerConfig, "scale").onChange(() => {
             this.player.group.scale.set(GameOptions.PlayerConfig.scale, GameOptions.PlayerConfig.scale, GameOptions.PlayerConfig.scale)
+        });
+
+        this.gui.add(GameOptions.PlayerConfig, "speed").onChange(() => {
+            //this.player.group.scale.set(GameOptions.PlayerConfig.scale, GameOptions.PlayerConfig.scale, GameOptions.PlayerConfig.scale)
+        });
+
+        this.gui.add(GameOptions.GameCameraConfig, "positionX").onChange(() => {
+            this.camera.position.set(GameOptions.GameCameraConfig.positionX, GameOptions.GameCameraConfig.positionY, GameOptions.GameCameraConfig.positionZ)
+        });
+
+        this.gui.add(GameOptions.GameCameraConfig, "positionY").onChange(() => {
+            this.camera.position.set(GameOptions.GameCameraConfig.positionX, GameOptions.GameCameraConfig.positionY, GameOptions.GameCameraConfig.positionZ)
+        });
+
+        this.gui.add(GameOptions.GameCameraConfig, "positionZ").onChange(() => {
+            this.camera.position.set(GameOptions.GameCameraConfig.positionX, GameOptions.GameCameraConfig.positionY, GameOptions.GameCameraConfig.positionZ)
         });
     }
 
@@ -71,16 +103,43 @@ export default class MainScene extends THREE.Scene {
 	}
 
     private handleInput() {
-        const speed = 0.1
         const dir = this.directionVector
-		this.camera.getWorldDirection(dir)
+		this.camera.getWorldDirection(dir);
+
+        const oldObjectPosition = new THREE.Vector3();
+        this.player?.group?.getWorldPosition(oldObjectPosition);
+
         const strafeDir = dir.clone()
-        const upVector = new THREE.Vector3(0, 1, 0)
+        const upVector = new THREE.Vector3(0, 1, 0);
+        const camUpVector = new THREE.Vector3(1, 0, 0)
+        this.player?.group?.rotateZ(0);
+        this.camera?.rotateZ(0)
         if (this.keyDown.has('a') || this.keyDown.has('arrowleft')) {
             this.player.group.position.add(
                 strafeDir.applyAxisAngle(upVector, Math.PI * 0.5)
-						.multiplyScalar(speed)
-            )
+						.multiplyScalar(GameOptions.PlayerConfig.speed)
+            );
+
+            if (THREE.MathUtils.radToDeg(this.player.group.rotation.z) < 8) {
+                this.player.group.rotateZ(THREE.MathUtils.degToRad(8));
+
+                if (THREE.MathUtils.radToDeg(this.camera.rotation.z) < 4) {
+                    this.camera.rotateZ(THREE.MathUtils.degToRad(4))
+                }
+            }
+
+            
+
+            
+
+            
+
+            const newObjectPosition = new THREE.Vector3();
+            this.player.group.getWorldPosition(newObjectPosition);
+
+            const delta = newObjectPosition.clone().sub(oldObjectPosition);
+            this.camera.position.add(delta)
+
             return;
         }
 
@@ -88,8 +147,27 @@ export default class MainScene extends THREE.Scene {
         {
             this.player.group.position.add(
                 strafeDir.applyAxisAngle(upVector, Math.PI * -0.5)
-						.multiplyScalar(speed)
+						.multiplyScalar(GameOptions.PlayerConfig.speed)
             )
+
+            
+            if (THREE.MathUtils.radToDeg(this.player.group.rotation.z) > -8) {
+                this.player.group.rotateZ(THREE.MathUtils.degToRad(-8));
+
+                if (THREE.MathUtils.radToDeg(this.camera.rotation.z) > -4) {
+                    this.camera.rotateZ(THREE.MathUtils.degToRad(-4))
+                }
+            }
+
+            
+
+
+            const newObjectPosition = new THREE.Vector3();
+            this.player.group.getWorldPosition(newObjectPosition);
+
+            const delta = newObjectPosition.clone().sub(oldObjectPosition);
+            this.camera.position.add(delta)
+
             return
         }
     }

@@ -14,7 +14,7 @@ renderer.setSize(width, height);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 document.body.appendChild( renderer.domElement )
 
-const mainCamera = new THREE.PerspectiveCamera(60, width / height, 0.1, 2000)
+const mainCamera = new THREE.PerspectiveCamera(60, width / height, 0.1, 50)
 const mainScene = new MainScene(mainCamera, renderer);
 
 const renderScene = new RenderPass(mainScene, mainCamera);
