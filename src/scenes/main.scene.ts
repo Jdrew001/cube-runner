@@ -7,6 +7,22 @@ import PlayerEntity from "../entities/player.entity";
 import AmbientLightEntity from "../entities/ambient-light.entity";
 import CubeEntity from "../entities/cube.entity";
 
+/**
+ * TODOS:
+ * 
+ * Cube Manager
+ * Camera Manager, and camera class
+ * Event manager and collision manager
+ * Refine player and camera movements
+ * add a debug camera
+ * Debug Gui manager
+ * Move the input logic in the player and camera manager
+ * 
+ * Add the plane
+ * add the skybox gradient
+ * 
+ */
+
 
 export default class MainScene extends THREE.Scene {
 
@@ -113,7 +129,6 @@ export default class MainScene extends THREE.Scene {
         const upVector = new THREE.Vector3(0, 1, 0);
         const camUpVector = new THREE.Vector3(1, 0, 0)
         this.player?.group?.rotateZ(0);
-        this.camera?.rotateZ(0)
         if (this.keyDown.has('a') || this.keyDown.has('arrowleft')) {
             this.player.group.position.add(
                 strafeDir.applyAxisAngle(upVector, Math.PI * 0.5)
@@ -128,11 +143,6 @@ export default class MainScene extends THREE.Scene {
                 }
             }
 
-            
-
-            
-
-            
 
             const newObjectPosition = new THREE.Vector3();
             this.player.group.getWorldPosition(newObjectPosition);
@@ -158,9 +168,6 @@ export default class MainScene extends THREE.Scene {
                     this.camera.rotateZ(THREE.MathUtils.degToRad(-4))
                 }
             }
-
-            
-
 
             const newObjectPosition = new THREE.Vector3();
             this.player.group.getWorldPosition(newObjectPosition);
