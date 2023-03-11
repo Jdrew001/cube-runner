@@ -1,6 +1,6 @@
 # Blender 3.4.1
 # www.blender.org
-mtllib untitled.mtl
+mtllib mainPlayer.mtl
 o mainPlayer
 v -0.688184 -0.206352 1.013840
 v -0.745703 -0.194426 1.096874
