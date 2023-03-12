@@ -1,21 +1,27 @@
 import * as THREE from 'three';
+import 'reflect-metadata';
 import { Color } from 'three';
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass";
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass';
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer";
 
 import MainScene from './scenes/main.scene';
+import { CameraManager } from './managers/camera.manager';
+import { Container } from 'typedi';
 
-const width = window.innerWidth
-const height = window.innerHeight
+const width = window.innerWidth;
+const height = window.innerHeight;
+const cameraManager = Container.get(CameraManager);
 
 const renderer = new THREE.WebGLRenderer();
+cameraManager.initialize();
+
 renderer.setSize(width, height);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 document.body.appendChild( renderer.domElement )
 
-const mainCamera = new THREE.PerspectiveCamera(60, width / height, 0.1, 50)
-const mainScene = new MainScene(mainCamera, renderer);
+const mainCamera = cameraManager.mainCamera;
+const mainScene = new MainScene(renderer);
 
 const renderScene = new RenderPass(mainScene, mainCamera);
 const bloomPass = new UnrealBloomPass(
