@@ -8,6 +8,7 @@ import AmbientLightEntity from "../entities/ambient-light.entity";
 import CubeEntity from "../entities/cube.entity";
 import Container from "typedi";
 import { CameraManager } from "../managers/camera.manager";
+import PlaneEntity from "../entities/plane.entity";
 
 /**
  * TODOS:
@@ -51,6 +52,10 @@ export default class MainScene extends THREE.Scene {
     get cubes() { return this._cubes; }
     set cubes(value) { this._cubes = value; }
 
+    private _planeEntity: PlaneEntity = new PlaneEntity();
+    get planeEntity() { return this._planeEntity; }
+    set planeEntity(value) { this._planeEntity = value; }
+
     CAM_CONFIG = GameOptions.GameCameraConfig;
 
     //private scale = new THREE.Vector3(1,1,1);
@@ -64,7 +69,9 @@ export default class MainScene extends THREE.Scene {
     async initialize() {
         this.initGui();
         await this.player.initialize();
+        await this.planeEntity.initialize();
         this.add(this.player.group);
+        this.add(this.planeEntity.group);
 
         //MMOVE THIS TO CAM MANAGER
         this.mainCamera.position.set(this.CAM_CONFIG.position.x, this.CAM_CONFIG.position.y, this.CAM_CONFIG.position.z)

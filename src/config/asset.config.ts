@@ -8,4 +8,9 @@ export default class AssetConfig {
         MTL: 'assets/obstacle/neonSquare.mtl',
         OBJ: 'assets/obstacle/neonSquare.obj'
     }
+
+    public static PLANE_ENTITY_PATHS = {
+        MTL: 'assets/floor/groundPlane.mtl',
+        OBJ: 'assets/floor/groundPlane.obj'
+    }
 }

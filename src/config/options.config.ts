@@ -37,4 +37,8 @@ export default class GameOptions {
         position: new THREE.Vector3(0, 1, -3)
     }
 
+    public static PlaneConfig = {
+        position: new THREE.Vector3(0, 0, -90)
+    }
+
 }
