@@ -92,6 +92,9 @@ export default class MainScene extends THREE.Scene {
         }
     }
 
+
+    // need to figure out best place to put this
+    // Manager?
     private initGui() {
         this.gui.add(GameOptions.PlayerConfig, "scale").onChange(() => {
             this.player.group.scale.set(GameOptions.PlayerConfig.scale, GameOptions.PlayerConfig.scale, GameOptions.PlayerConfig.scale)
@@ -122,6 +125,8 @@ export default class MainScene extends THREE.Scene {
 		this.keyDown.delete(event.key.toLowerCase());
 	}
 
+
+    // move to player manager
     private handleInput() {
         const dir = this.directionVector
 		this.mainCamera.getWorldDirection(dir);
