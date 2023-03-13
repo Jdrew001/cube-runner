@@ -31,6 +31,7 @@ import PlaneManager from "../managers/plane.manager";
 export default class MainScene extends THREE.Scene {
 
     private readonly cameraManager = Container.get(CameraManager);
+    private planeBuffer: THREE.Mesh;
 
     gui = new GUI();
     private readonly keyDown = new Set<string>()
@@ -67,15 +68,15 @@ export default class MainScene extends THREE.Scene {
 
         const mapLoader = new THREE.TextureLoader();
         const checkerboard = mapLoader.load('assets/grid.png');
-        const planeBG = new THREE.Mesh(
-            new THREE.PlaneGeometry(100, 20, 10, 10),
+        this.planeBuffer = new THREE.Mesh(
+            new THREE.PlaneGeometry(120, 25, 10, 10),
             new THREE.MeshStandardMaterial({map: checkerboard}));
-            planeBG.castShadow = false;
-            planeBG.receiveShadow = true;
-            planeBG.rotation.x = -Math.PI / 2;
-            planeBG.position.add(new THREE.Vector3(0,0.1,-60));
+            this.planeBuffer.castShadow = false;
+            this.planeBuffer.receiveShadow = true;
+            this.planeBuffer.rotation.x = -Math.PI / 2;
+            this.planeBuffer.position.add(new THREE.Vector3(0,0.1,-60));
         this.add(this.player.group);
-        this.add(planeBG)
+        this.add(this.planeBuffer);
         this.add(new AmbientLightEntity());
 
         document.addEventListener('keydown', this.handleKeyDown)
@@ -153,6 +154,7 @@ export default class MainScene extends THREE.Scene {
 
             const delta = newObjectPosition.clone().sub(oldObjectPosition);
             this.mainCamera.position.add(delta)
+            this.planeBuffer?.position.add(delta);
 
             return;
         }
@@ -178,6 +180,7 @@ export default class MainScene extends THREE.Scene {
 
             const delta = newObjectPosition.clone().sub(oldObjectPosition);
             this.mainCamera.position.add(delta)
+            this.planeBuffer?.position.add(delta);
 
             return
         }
