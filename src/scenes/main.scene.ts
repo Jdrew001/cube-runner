@@ -49,18 +49,10 @@ export default class MainScene extends THREE.Scene {
     get player() { return this._player;}
     set player(player: PlayerEntity) { this._player = player; }
 
-    private _cubes: Array<CubeEntity> = new Array<CubeEntity>();
-    get cubes() { return this._cubes; }
-    set cubes(value) { this._cubes = value; }
+    
 
     private planeManager = Container.get(PlaneManager);
 
-    CAM_CONFIG = GameOptions.GameCameraConfig;
-
-    //private scale = new THREE.Vector3(1,1,1);
-
-
-    
     constructor(
         renderer: any) {
             super();
@@ -71,16 +63,20 @@ export default class MainScene extends THREE.Scene {
         this.initGui();
         await this.player.initialize();
         await this.planeManager.initialize(this);
+        
+
+        const mapLoader = new THREE.TextureLoader();
+        const checkerboard = mapLoader.load('assets/grid.png');
+        const planeBG = new THREE.Mesh(
+            new THREE.PlaneGeometry(100, 30, 10, 10),
+            new THREE.MeshStandardMaterial({map: checkerboard}));
+            planeBG.castShadow = false;
+            planeBG.receiveShadow = true;
+            planeBG.rotation.x = -Math.PI / 2;
+            planeBG.position.add(new THREE.Vector3(0,0.1,-50));
         this.add(this.player.group);
-
-        //MMOVE THIS TO CAM MANAGER
-        this.mainCamera.position.set(this.CAM_CONFIG.position.x, this.CAM_CONFIG.position.y, this.CAM_CONFIG.position.z)
-        this.mainCamera.rotation.set(this.CAM_CONFIG.rotation.x, this.CAM_CONFIG.rotation.y, this.CAM_CONFIG.rotation.z)
-        //this.player.group.add(this.camera);
-
+        this.add(planeBG)
         this.add(new AmbientLightEntity());
-
-        await this.initCube();
 
         document.addEventListener('keydown', this.handleKeyDown)
 		document.addEventListener('keyup', this.handleKeyUp)
@@ -89,15 +85,6 @@ export default class MainScene extends THREE.Scene {
     update() {
         this.handleInput();
         this.planeManager.update();
-    }
-
-    async initCube() {
-        for (let i = 0; i < 1; i++) {
-            const cube = new CubeEntity();
-            await cube.initialize();
-            this.add(cube.group);
-            this.cubes.push(cube);
-        }
     }
 
 

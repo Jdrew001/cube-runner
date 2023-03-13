@@ -20,11 +20,12 @@ export default class PlaneEntity extends BaseEntity {
 
     async initialize(addToPosition?: number, zPos?) {
         this.group = await this.createPlane();
+        console.log('zindex', zPos);
         this.group.position.set(this.config.position.x + addToPosition, this.config.position.y, zPos);
         this.box = new THREE.Box3().setFromObject(this.group);
+        //this.group.scale.set(1,1,1);
 
         let camPosZ = Math.abs(this.cameraManager.mainCamera.position.z - this.config.position.z)
-        console.log('diminsions', this.getDiminsions(), this.cameraManager.getWidthOfView(camPosZ));
     }
     update() {
         

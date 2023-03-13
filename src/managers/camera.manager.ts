@@ -38,5 +38,7 @@ export class CameraManager {
             width / height, 
             this.MAIN_CAMERA_CONFIG.near, 
             this.MAIN_CAMERA_CONFIG.far)
+        
+        this.mainCamera.position.set(this.MAIN_CAMERA_CONFIG.position.x, this.MAIN_CAMERA_CONFIG.position.y, this.MAIN_CAMERA_CONFIG.position.z);
     }
 }

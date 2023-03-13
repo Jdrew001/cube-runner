@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import GameOptions from "../config/options.config";
 
-export default class AmbientLightEntity extends THREE.AmbientLight {
+export default class AmbientLightEntity extends THREE.AmbientLightProbe {
 
     private LIGHT_OPTIONS = GameOptions.LightConfig;
     

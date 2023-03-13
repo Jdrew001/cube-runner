@@ -31,6 +31,7 @@ export class MtlObjLoadersService {
         let mtl = this.objLoader.setMaterials(entityMTL);
         let neon = mtl.materials?.materials['Neon'] as MeshPhongMaterial;
         let floorNeon = mtl.materials?.materials['floorNeon'] as MeshPhongMaterial;
+        let floorBase = mtl.materials.materials['floorBase'] as MeshPhongMaterial;
         console.log('mlt', mtl);
 
         if (neon) {
@@ -39,6 +40,8 @@ export class MtlObjLoadersService {
 
         if(floorNeon) {
             floorNeon.color = new Color(0x00B1FF);
+            floorNeon.opacity = 0.2
+            floorNeon.fog = true
         }
     }
 }
