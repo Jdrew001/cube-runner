@@ -9,6 +9,7 @@ import CubeEntity from "../entities/cube.entity";
 import Container from "typedi";
 import { CameraManager } from "../managers/camera.manager";
 import PlaneEntity from "../entities/plane.entity";
+import PlaneManager from "../managers/plane.manager";
 
 /**
  * TODOS:
@@ -52,13 +53,13 @@ export default class MainScene extends THREE.Scene {
     get cubes() { return this._cubes; }
     set cubes(value) { this._cubes = value; }
 
-    private _planeEntity: PlaneEntity = new PlaneEntity();
-    get planeEntity() { return this._planeEntity; }
-    set planeEntity(value) { this._planeEntity = value; }
+    private planeManager = Container.get(PlaneManager);
 
     CAM_CONFIG = GameOptions.GameCameraConfig;
 
     //private scale = new THREE.Vector3(1,1,1);
+
+
     
     constructor(
         renderer: any) {
@@ -69,9 +70,8 @@ export default class MainScene extends THREE.Scene {
     async initialize() {
         this.initGui();
         await this.player.initialize();
-        await this.planeEntity.initialize();
+        await this.planeManager.initialize(this);
         this.add(this.player.group);
-        this.add(this.planeEntity.group);
 
         //MMOVE THIS TO CAM MANAGER
         this.mainCamera.position.set(this.CAM_CONFIG.position.x, this.CAM_CONFIG.position.y, this.CAM_CONFIG.position.z)
@@ -88,6 +88,7 @@ export default class MainScene extends THREE.Scene {
 
     update() {
         this.handleInput();
+        this.planeManager.update();
     }
 
     async initCube() {
@@ -154,9 +155,9 @@ export default class MainScene extends THREE.Scene {
             if (THREE.MathUtils.radToDeg(this.player.group.rotation.z) < 8) {
                 this.player.group.rotateZ(THREE.MathUtils.degToRad(8));
 
-                if (THREE.MathUtils.radToDeg(this.mainCamera.rotation.z) < 4) {
-                    this.mainCamera.rotateZ(THREE.MathUtils.degToRad(4))
-                }
+                // if (THREE.MathUtils.radToDeg(this.mainCamera.rotation.z) < 4) {
+                //     this.mainCamera.rotateZ(THREE.MathUtils.degToRad(4))
+                // }
             }
 
 
@@ -180,9 +181,9 @@ export default class MainScene extends THREE.Scene {
             if (THREE.MathUtils.radToDeg(this.player.group.rotation.z) > -8) {
                 this.player.group.rotateZ(THREE.MathUtils.degToRad(-8));
 
-                if (THREE.MathUtils.radToDeg(this.mainCamera.rotation.z) > -4) {
-                    this.mainCamera.rotateZ(THREE.MathUtils.degToRad(-4))
-                }
+                // if (THREE.MathUtils.radToDeg(this.mainCamera.rotation.z) > -4) {
+                //     this.mainCamera.rotateZ(THREE.MathUtils.degToRad(-4))
+                // }
             }
 
             const newObjectPosition = new THREE.Vector3();

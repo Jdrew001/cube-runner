@@ -17,6 +17,19 @@ export class CameraManager {
         this.createMainCamera();
     }
 
+    getFieldOfView() {
+        return this.mainCamera.fov;
+    }
+
+    getHeightOfView(dist) {
+        let vFOV = THREE.MathUtils.degToRad( this.getFieldOfView() );
+        return 2 * Math.tan(vFOV / 2) * dist;
+    }
+
+    getWidthOfView(dist) {
+        return this.getHeightOfView(dist) * this.mainCamera.aspect;
+    }
+
     private createMainCamera() {
         const width = window.innerWidth
         const height = window.innerHeight

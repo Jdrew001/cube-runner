@@ -13,11 +13,13 @@ const width = window.innerWidth;
 const height = window.innerHeight;
 const cameraManager = Container.get(CameraManager);
 
-const renderer = new THREE.WebGLRenderer();
+const renderer = new THREE.WebGLRenderer({ antialias: true, });
 cameraManager.initialize();
+cameraManager.mainCamera.focus = 0
 
 renderer.setSize(width, height);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.autoClear = false;
 document.body.appendChild( renderer.domElement )
 
 const mainCamera = cameraManager.mainCamera;
@@ -31,6 +33,7 @@ const bloomPass = new UnrealBloomPass(
 	0
   );
 bloomPass.clearColor = new Color(0xffffff);
+
 const composer = new EffectComposer(renderer);
 composer.addPass(renderScene);
 composer.addPass(bloomPass);

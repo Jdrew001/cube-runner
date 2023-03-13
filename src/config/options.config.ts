@@ -10,7 +10,7 @@ export default class GameOptions {
     }
 
     public static PlayerConfig = {
-        position: new THREE.Vector3(0, 1, 2.5),
+        position: new THREE.Vector3(0, 1, -2),
         scale: 0.2,
         speed: 0.2
     }
@@ -21,10 +21,10 @@ export default class GameOptions {
         positionY: 4,
         positionZ: 9.5,
         rotation: new THREE.Vector3(0, 0.00, 0),
-        fov: 60,
-        aspect:0, 
+        fov: 40,
+        aspect:1, 
         near: 0.1, 
-        far: 2000
+        far: 60
     }
 
     public static LightConfig = {
@@ -33,12 +33,12 @@ export default class GameOptions {
     }
 
     public static CubeConfig = {
-        scale: 0.4,
-        position: new THREE.Vector3(0, 1, -3)
+        scale: 0.2,
+        position: new THREE.Vector3(0, 1, -6)
     }
 
     public static PlaneConfig = {
-        position: new THREE.Vector3(0, 0, -90)
+        position: new THREE.Vector3(-120, 0, -50) //-120
     }
 
 }
