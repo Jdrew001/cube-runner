@@ -20,7 +20,6 @@ export default class PlaneEntity extends BaseEntity {
 
     async initialize(addToPosition?: number, zPos?) {
         this.group = await this.createPlane();
-        console.log('zindex', zPos);
         this.group.position.set(this.config.position.x + addToPosition, this.config.position.y, zPos);
         this.box = new THREE.Box3().setFromObject(this.group);
         //this.group.scale.set(1,1,1);
@@ -32,6 +31,10 @@ export default class PlaneEntity extends BaseEntity {
     }
     destroy() {
         
+    }
+
+    resetToPosition(position: THREE.Vector3) {
+        this.group.position.set(position.x, position.y, position.z);
     }
 
     createPlane() {

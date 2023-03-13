@@ -68,12 +68,12 @@ export default class MainScene extends THREE.Scene {
         const mapLoader = new THREE.TextureLoader();
         const checkerboard = mapLoader.load('assets/grid.png');
         const planeBG = new THREE.Mesh(
-            new THREE.PlaneGeometry(100, 30, 10, 10),
+            new THREE.PlaneGeometry(100, 20, 10, 10),
             new THREE.MeshStandardMaterial({map: checkerboard}));
             planeBG.castShadow = false;
             planeBG.receiveShadow = true;
             planeBG.rotation.x = -Math.PI / 2;
-            planeBG.position.add(new THREE.Vector3(0,0.1,-50));
+            planeBG.position.add(new THREE.Vector3(0,0.1,-60));
         this.add(this.player.group);
         this.add(planeBG)
         this.add(new AmbientLightEntity());

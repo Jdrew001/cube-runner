@@ -23,6 +23,7 @@ export default class PlaneManager {
     private heightNum = 32.2;
     private zStart = -80;
     private speed = 0.1;
+    private resetThreshold = 20;
 
     private cameraManager = Container.get(CameraManager);
     private config = GameOptions.PlaneConfig;
@@ -44,11 +45,25 @@ export default class PlaneManager {
     }
 
     animatePlanes() {
-        this.planes.forEach(planeGroup => {
-            planeGroup.forEach(plane => {
-                plane.group.position.add(new THREE.Vector3(0,0, this.speed));
+        for (let i = 0; i < this.planes.length; i++) {
+            this.resetGroupPosition(this.planes[i], i);
+
+            for (let z = 0; z < this.planes[i].length; z++) {
+                this.planes[i][z].group.position.add(new THREE.Vector3(0,0, this.speed));
+            }
+        }
+    }
+
+    private resetGroupPosition(planeGroup: Array<PlaneEntity>, groupIndex: number) {
+        if ((planeGroup[0] as PlaneEntity).group.position.z > this.resetThreshold) {
+
+            planeGroup.forEach(element => {
+                let resetIndex = groupIndex == 0 ? this.rows - 1: groupIndex - 1; 
+                let resetZPos = this.planes[resetIndex][0].group.position.z - this.heightNum;
+                let newPosition = new THREE.Vector3(element.group.position.x, element.group.position.y, resetZPos);
+                element.resetToPosition(newPosition);
             });
-        })
+        }
     }
 
     private async createPlaneRows() {

@@ -23,8 +23,8 @@ export default class GameOptions {
         rotation: new THREE.Vector3(0, 0.00, 0),
         fov: 40,
         aspect:1, 
-        near: 0.1, 
-        far: 60
+        near: 1, 
+        far: 80
     }
 
     public static LightConfig = {
