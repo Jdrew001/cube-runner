@@ -6,13 +6,21 @@ import PlaneManager from "./plane.manager";
 @Service()
 export default class InputManager {
 
+    clock = new THREE.Clock();
+    get scene() { return this._scene; }
+    private _scene: THREE.Scene;
+
     private directionVector = new THREE.Vector3();
     private readonly keyDown = new Set<string>();
     private readonly planeManager = Container.get(PlaneManager);
 
-    initialize() {
+    private animateTime = 1/18;
+
+    initialize(scene: THREE.Scene) {
+        this._scene = scene;
         document.addEventListener('keydown', this.handleKeyDown)
-		document.addEventListener('keyup', this.handleKeyUp)
+		document.addEventListener('keyup', this.handleKeyUp);
+        this.clock.start();
     }
 
     handleInput(player, mainCamera, planeBuffer) {
@@ -37,9 +45,9 @@ export default class InputManager {
             if (THREE.MathUtils.radToDeg(player.group.rotation.z) < 8) {
                 player.group.rotateZ(THREE.MathUtils.degToRad(8));
 
-                // if (THREE.MathUtils.radToDeg(mainCamera.rotation.z) < 4) {
-                //     mainCamera.rotateZ(THREE.MathUtils.degToRad(4))
-                // }
+                if (THREE.MathUtils.radToDeg(mainCamera.rotation.z) < 1) {
+                    mainCamera.rotateZ(THREE.MathUtils.degToRad(1))
+                }
             }
 
 
@@ -67,9 +75,9 @@ export default class InputManager {
             if (THREE.MathUtils.radToDeg(player.group.rotation.z) > -8) {
                 player.group.rotateZ(THREE.MathUtils.degToRad(-8));
 
-                // if (THREE.MathUtils.radToDeg(mainCamera.rotation.z) > -4) {
-                //     mainCamera.rotateZ(THREE.MathUtils.degToRad(-4))
-                // }
+                if (THREE.MathUtils.radToDeg(mainCamera.rotation.z) > -1) {
+                    mainCamera.rotateZ(THREE.MathUtils.degToRad(-1))
+                }
             }
 
             const newObjectPosition = new THREE.Vector3();
@@ -82,6 +90,28 @@ export default class InputManager {
             this.planeManager.resetPlaneXPositionRight(player.group.position.x);
 
             return
+        }
+
+        if (this.clock.getElapsedTime() > this.animateTime) {
+            console.log(THREE.MathUtils.radToDeg(player.group.rotation.z))
+            if (THREE.MathUtils.radToDeg(player.group.rotation.z) < 0) {
+                player.group.rotateZ(THREE.MathUtils.degToRad(8));
+            }
+
+            if (THREE.MathUtils.radToDeg(player.group.rotation.z) > 0) {
+                player.group.rotateZ(THREE.MathUtils.degToRad(-8));
+            }
+
+            //camera reset
+            if (THREE.MathUtils.radToDeg(mainCamera.rotation.z) < 0) {
+                mainCamera.rotateZ(THREE.MathUtils.degToRad(1/2))
+            }
+
+            if (THREE.MathUtils.radToDeg(mainCamera.rotation.z) > 0) {
+                mainCamera.rotateZ(THREE.MathUtils.degToRad(-1/2))
+            }
+
+            this.clock.start();
         }
     }
 

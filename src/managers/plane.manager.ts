@@ -87,11 +87,11 @@ export default class PlaneManager {
             let threshold = furthestRightPlane.position.x - ((this.widthNum / 2) * 2); //(this.widthNum / 2)
 
             if (playerXPosition > threshold) {
-                // update the position to be to the left of the first element of the array
+                // update the position to be to the right of the last element of the array
                 let lastPlaneXPosition = planeGroup[index].group.position.x;
                 furthestLeftPlane.position.set(lastPlaneXPosition + this.widthNum, furthestLeftPlane.position.y, furthestLeftPlane.position.z);
 
-                // pop this plane from array and move it to the beginning of the array
+                // shift the array to the left [0,1,2] -> [1,2,0]
                 planeGroup.unshift(...planeGroup.splice(1));
             }
         })
@@ -109,7 +109,7 @@ export default class PlaneManager {
                 let firstPlaneXPosition = planeGroup[0].group.position.x;
                 furthestRightPlane.position.set(firstPlaneXPosition - this.widthNum, furthestRightPlane.position.y, furthestRightPlane.position.z);
 
-                // pop this plane from array and move it to the beginning of the array
+                // shift the array to the right [0,1,2] -> [2,1,0]
                 planeGroup.unshift(...planeGroup.splice(-1));
             }
         })
