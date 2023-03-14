@@ -52,11 +52,10 @@ export default class MainScene extends THREE.Scene {
     async initialize() {
         await this.player.initialize();
         await this.planeManager.initialize(this);
+        this.inputManager.initialize(this);
 
         this.add(this.player.group);
         this.add(new AmbientLightEntity());
-
-        this.inputManager.initialize();
 
         if (import.meta.env.DEV) {
             this.initializeDebugManager();
