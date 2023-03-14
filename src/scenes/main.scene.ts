@@ -10,6 +10,9 @@ import Container from "typedi";
 import { CameraManager } from "../managers/camera.manager";
 import PlaneEntity from "../entities/plane.entity";
 import PlaneManager from "../managers/plane.manager";
+import DebugManager from "../managers/debug.manager";
+import InputManager from "../managers/input.manager";
+import.meta.env.DEV
 
 /**
  * TODOS:
@@ -19,29 +22,19 @@ import PlaneManager from "../managers/plane.manager";
  * Event manager and collision manager
  * Refine player and camera movements
  * add a debug camera
- * Debug Gui manager
- * Move the input logic in the player and camera manager
  * 
- * Add the plane
  * add the skybox gradient
  * 
  */
 
-
 export default class MainScene extends THREE.Scene {
 
     private readonly cameraManager = Container.get(CameraManager);
-    private planeBuffer: THREE.Mesh;
-
-    gui = new GUI();
-    private readonly keyDown = new Set<string>()
-
-    private readonly mtlLoader = new MTLLoader()
-	private readonly objLoader = new OBJLoader()
+    private readonly planeManager = Container.get(PlaneManager);
+    private readonly debugManager = Container.get(DebugManager);
+    private readonly inputManager = Container.get(InputManager);
 
     get mainCamera() { return this.cameraManager.mainCamera; }
-
-    private directionVector = new THREE.Vector3()
 
     _renderer: any;
     get renderer() { return this._renderer; }
@@ -50,10 +43,6 @@ export default class MainScene extends THREE.Scene {
     get player() { return this._player;}
     set player(player: PlayerEntity) { this._player = player; }
 
-    
-
-    private planeManager = Container.get(PlaneManager);
-
     constructor(
         renderer: any) {
             super();
@@ -61,128 +50,28 @@ export default class MainScene extends THREE.Scene {
     }
 
     async initialize() {
-        this.initGui();
         await this.player.initialize();
         await this.planeManager.initialize(this);
-        
 
-        const mapLoader = new THREE.TextureLoader();
-        const checkerboard = mapLoader.load('assets/grid.png');
-        this.planeBuffer = new THREE.Mesh(
-            new THREE.PlaneGeometry(120, 25, 10, 10),
-            new THREE.MeshStandardMaterial({map: checkerboard}));
-            this.planeBuffer.castShadow = false;
-            this.planeBuffer.receiveShadow = true;
-            this.planeBuffer.rotation.x = -Math.PI / 2;
-            this.planeBuffer.position.add(new THREE.Vector3(0,0.1,-60));
         this.add(this.player.group);
-        this.add(this.planeBuffer);
         this.add(new AmbientLightEntity());
 
-        document.addEventListener('keydown', this.handleKeyDown)
-		document.addEventListener('keyup', this.handleKeyUp)
+        this.inputManager.initialize();
+
+        if (import.meta.env.DEV) {
+            this.initializeDebugManager();
+        }
     }
 
     update() {
-        this.handleInput();
+        this.inputManager.handleInput(this.player, this.mainCamera, this.planeManager.planeBuffer);
         this.planeManager.update();
     }
 
-
-    // need to figure out best place to put this
-    // Manager?
-    private initGui() {
-        this.gui.add(GameOptions.PlayerConfig, "scale").onChange(() => {
-            this.player.group.scale.set(GameOptions.PlayerConfig.scale, GameOptions.PlayerConfig.scale, GameOptions.PlayerConfig.scale)
-        });
-
-        this.gui.add(GameOptions.PlayerConfig, "speed").onChange(() => {
-            //this.player.group.scale.set(GameOptions.PlayerConfig.scale, GameOptions.PlayerConfig.scale, GameOptions.PlayerConfig.scale)
-        });
-
-        this.gui.add(GameOptions.GameCameraConfig, "positionX").onChange(() => {
-            this.mainCamera.position.set(GameOptions.GameCameraConfig.positionX, GameOptions.GameCameraConfig.positionY, GameOptions.GameCameraConfig.positionZ)
-        });
-
-        this.gui.add(GameOptions.GameCameraConfig, "positionY").onChange(() => {
-            this.mainCamera.position.set(GameOptions.GameCameraConfig.positionX, GameOptions.GameCameraConfig.positionY, GameOptions.GameCameraConfig.positionZ)
-        });
-
-        this.gui.add(GameOptions.GameCameraConfig, "positionZ").onChange(() => {
-            this.mainCamera.position.set(GameOptions.GameCameraConfig.positionX, GameOptions.GameCameraConfig.positionY, GameOptions.GameCameraConfig.positionZ)
-        });
-    }
-
-    private handleKeyDown = (event: KeyboardEvent) => {
-		this.keyDown.add(event.key.toLowerCase());
-	}
-
-	private handleKeyUp = (event: KeyboardEvent) => {
-		this.keyDown.delete(event.key.toLowerCase());
-	}
-
-
-    // move to player manager
-    private handleInput() {
-        const dir = this.directionVector
-		this.mainCamera.getWorldDirection(dir);
-
-        const oldObjectPosition = new THREE.Vector3();
-        this.player?.group?.getWorldPosition(oldObjectPosition);
-
-        const strafeDir = dir.clone()
-        const upVector = new THREE.Vector3(0, 1, 0);
-        const camUpVector = new THREE.Vector3(1, 0, 0)
-        this.player?.group?.rotateZ(0);
-        if (this.keyDown.has('a') || this.keyDown.has('arrowleft')) {
-            this.player.group.position.add(
-                strafeDir.applyAxisAngle(upVector, Math.PI * 0.5)
-						.multiplyScalar(GameOptions.PlayerConfig.speed)
-            );
-
-            if (THREE.MathUtils.radToDeg(this.player.group.rotation.z) < 8) {
-                this.player.group.rotateZ(THREE.MathUtils.degToRad(8));
-
-                // if (THREE.MathUtils.radToDeg(this.mainCamera.rotation.z) < 4) {
-                //     this.mainCamera.rotateZ(THREE.MathUtils.degToRad(4))
-                // }
-            }
-
-
-            const newObjectPosition = new THREE.Vector3();
-            this.player.group.getWorldPosition(newObjectPosition);
-
-            const delta = newObjectPosition.clone().sub(oldObjectPosition);
-            this.mainCamera.position.add(delta)
-            this.planeBuffer?.position.add(delta);
-
-            return;
-        }
-
-        if (this.keyDown.has('d') || this.keyDown.has('arrowright'))
-        {
-            this.player.group.position.add(
-                strafeDir.applyAxisAngle(upVector, Math.PI * -0.5)
-						.multiplyScalar(GameOptions.PlayerConfig.speed)
-            )
-
-            
-            if (THREE.MathUtils.radToDeg(this.player.group.rotation.z) > -8) {
-                this.player.group.rotateZ(THREE.MathUtils.degToRad(-8));
-
-                // if (THREE.MathUtils.radToDeg(this.mainCamera.rotation.z) > -4) {
-                //     this.mainCamera.rotateZ(THREE.MathUtils.degToRad(-4))
-                // }
-            }
-
-            const newObjectPosition = new THREE.Vector3();
-            this.player.group.getWorldPosition(newObjectPosition);
-
-            const delta = newObjectPosition.clone().sub(oldObjectPosition);
-            this.mainCamera.position.add(delta)
-            this.planeBuffer?.position.add(delta);
-
-            return
-        }
+    private initializeDebugManager() {
+        this.debugManager.initialize();
+        this.debugManager.playerDebugOptions(this.player);
+        this.debugManager.gameCameraOptions(this.mainCamera)
+        this.debugManager.LightOptions();
     }
 }
